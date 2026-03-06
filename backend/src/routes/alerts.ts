@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { requireRider } from '../middleware/auth';
-import { setDMS, snoozeDMS, disableDMS, getDMS } from '../services/dms';
+import { setDMS, snoozeDMS, disableDMS, getDMS, fireAlert } from '../services/dms';
 
 const router = Router();
 
@@ -59,6 +59,17 @@ router.post('/dms/snooze', requireRider, async (req: Request, res: Response) => 
 router.post('/dms/disable', requireRider, async (req: Request, res: Response) => {
   const riderId = (req as any).riderId;
   await disableDMS(riderId);
+  res.json({ ok: true });
+});
+
+// POST /alerts/fire — Fire a DMS alert from the app side
+// Used when the client-side countdown expires with no rider response.
+// The server-side watchdog (checkDMS cron) is the primary backstop; this fires immediately.
+router.post('/fire', requireRider, async (req: Request, res: Response) => {
+  const riderId = (req as any).riderId;
+  const { groupId, lat, lng } = req.body as { groupId?: string; lat?: number; lng?: number };
+  const location = lat != null && lng != null ? { lat, lng } : null;
+  await fireAlert(riderId, groupId ?? '', 'dead_mans_switch', location);
   res.json({ ok: true });
 });
 

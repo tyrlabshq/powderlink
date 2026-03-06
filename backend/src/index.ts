@@ -10,6 +10,7 @@ import locationRoutes from './routes/locations';
 import alertRoutes from './routes/alerts';
 import trailRoutes from './routes/trails';
 import emergencyRoutes from './routes/emergency';
+import rideRoutes from './routes/rides';
 import { addClient, removeClient, broadcastToGroup, WsClient } from './ws';
 import { checkDMS } from './services/dms';
 
@@ -31,6 +32,7 @@ app.use('/locations', locationRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/trails', trailRoutes);
 app.use('/emergency', emergencyRoutes);
+app.use('/rides', rideRoutes);
 
 // HTTP + WebSocket server
 const server = http.createServer(app);

@@ -12,6 +12,18 @@ export default function ProfileScreen() {
 
       <TouchableOpacity
         style={styles.menuItem}
+        onPress={() => navigation.navigate('RideHistory')}
+      >
+        <Text style={styles.menuIcon}>🛷</Text>
+        <View style={styles.menuText}>
+          <Text style={styles.menuTitle}>Ride History</Text>
+          <Text style={styles.menuSubtitle}>Your last 30 rides — stats, routes, and summaries</Text>
+        </View>
+        <Text style={styles.menuArrow}>›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.menuItem}
         onPress={() => navigation.navigate('EmergencyInfo')}
       >
         <Text style={styles.menuIcon}>🆘</Text>
@@ -21,11 +33,6 @@ export default function ProfileScreen() {
         </View>
         <Text style={styles.menuArrow}>›</Text>
       </TouchableOpacity>
-
-      {/* Placeholder for future profile items */}
-      <View style={styles.placeholderSection}>
-        <Text style={styles.placeholderText}>More profile features coming soon</Text>
-      </View>
     </ScrollView>
   );
 }
@@ -49,9 +56,4 @@ const styles = StyleSheet.create({
   menuTitle: { color: colors.text, fontSize: 16, fontWeight: '600' },
   menuSubtitle: { color: colors.textDim, fontSize: 13, marginTop: 2 },
   menuArrow: { color: colors.textDim, fontSize: 24, fontWeight: '300' },
-  placeholderSection: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  placeholderText: { color: colors.textDim, fontSize: 14 },
 });

@@ -24,8 +24,34 @@ export interface SweepGap {
   alert: boolean;
 }
 
+/** A group chat message received over WebSocket. */
+export interface GroupMessage {
+  messageId: string;
+  riderId: string;
+  riderName: string;
+  text: string;
+  preset: string | null;
+  timestamp: number;
+}
+
+/** Options for auto-joining a group session and enabling messaging. */
+export interface UseGroupWebSocketOptions {
+  groupId?: string;
+  riderId?: string;
+  riderName?: string;
+}
+
+/** Queued outbound message (sent when connectivity restores). */
+interface PendingMessage {
+  type: 'group_message';
+  text: string;
+  preset: string | null;
+  riderName: string;
+}
+
 const BASE_RECONNECT_MS = 1000;
 const MAX_RECONNECT_MS = 30000;
+const MAX_MESSAGES = 50; // keep last 50 in memory, display last 10
 
 const WS_URL =
   (process.env as Record<string, string | undefined>).EXPO_PUBLIC_WS_URL ??
@@ -45,23 +71,50 @@ interface UseGroupWebSocketResult {
   /** Leader alert: sweep has fallen >2mi behind. */
   sweepLeaderAlert: string | null;
   dismissSweepLeaderAlert: () => void;
+  /** Group chat messages received during this session. */
+  messages: GroupMessage[];
+  /** Send a group message. Queued offline if not currently connected. */
+  sendGroupMessage: (text: string, preset?: string | null) => void;
 }
 
-export function useGroupWebSocket(): UseGroupWebSocketResult {
+export function useGroupWebSocket(options?: UseGroupWebSocketOptions): UseGroupWebSocketResult {
   const [members, setMembers] = useState<Map<string, MemberLocation>>(new Map());
   const [connected, setConnected] = useState(false);
   const [cmoStates, setCmoStates] = useState<Map<string, CMOState>>(new Map());
   const [sweepGap, setSweepGap] = useState<SweepGap | null>(null);
   const [cmoWarning, setCmoWarning] = useState(false);
   const [sweepLeaderAlert, setSweepLeaderAlert] = useState<string | null>(null);
+  const [messages, setMessages] = useState<GroupMessage[]>([]);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectDelay = useRef(BASE_RECONNECT_MS);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unmounted = useRef(false);
+  // Offline message queue — flushed on reconnect
+  const pendingQueue = useRef<PendingMessage[]>([]);
+  // Keep latest options in a ref so callbacks always see fresh values without re-subscribing
+  const optionsRef = useRef<UseGroupWebSocketOptions | undefined>(options);
+  useEffect(() => { optionsRef.current = options; }, [options]);
 
   const dismissCmoWarning = useCallback(() => setCmoWarning(false), []);
   const dismissSweepLeaderAlert = useCallback(() => setSweepLeaderAlert(null), []);
+
+  const sendGroupMessage = useCallback((text: string, preset: string | null = null) => {
+    const opts = optionsRef.current;
+    const payload: PendingMessage = {
+      type: 'group_message',
+      text: text.trim().slice(0, 200),
+      preset,
+      riderName: opts?.riderName ?? 'Rider',
+    };
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(payload));
+    } else {
+      // Queue for when connectivity restores
+      pendingQueue.current.push(payload);
+    }
+  }, []);
 
   const connect = useCallback(() => {
     if (unmounted.current) return;
@@ -77,6 +130,26 @@ export function useGroupWebSocket(): UseGroupWebSocketResult {
         }
         setConnected(true);
         reconnectDelay.current = BASE_RECONNECT_MS;
+
+        // Auto-join group session if options were provided
+        const opts = optionsRef.current;
+        if (opts?.groupId && opts?.riderId) {
+          ws.send(JSON.stringify({
+            type: 'join_group',
+            groupId: opts.groupId,
+            riderId: opts.riderId,
+          }));
+        }
+
+        // Flush any messages queued while offline
+        if (pendingQueue.current.length > 0) {
+          const queue = pendingQueue.current.splice(0);
+          for (const pending of queue) {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify(pending));
+            }
+          }
+        }
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -146,6 +219,38 @@ export function useGroupWebSocket(): UseGroupWebSocketResult {
               break;
             }
 
+            case 'group_message': {
+              const gm: GroupMessage = {
+                messageId: msg.messageId ?? `${Date.now()}-${Math.random()}`,
+                riderId: msg.riderId ?? '',
+                riderName: msg.riderName ?? 'Rider',
+                text: msg.text ?? '',
+                preset: msg.preset ?? null,
+                timestamp: typeof msg.timestamp === 'number' ? msg.timestamp : Date.now(),
+              };
+              setMessages((prev) => {
+                // Deduplicate by messageId
+                if (prev.some((m) => m.messageId === gm.messageId)) return prev;
+                const next = [...prev, gm];
+                return next.length > MAX_MESSAGES ? next.slice(-MAX_MESSAGES) : next;
+              });
+              break;
+            }
+
+            case 'group_message_history': {
+              if (!Array.isArray(msg.messages)) break;
+              const history: GroupMessage[] = msg.messages.map((m: Record<string, unknown>) => ({
+                messageId: (m.messageId as string) ?? `${Date.now()}-${Math.random()}`,
+                riderId: (m.riderId as string) ?? '',
+                riderName: (m.riderName as string) ?? 'Rider',
+                text: (m.text as string) ?? '',
+                preset: (m.preset as string | null) ?? null,
+                timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now(),
+              }));
+              setMessages(history.slice(-MAX_MESSAGES));
+              break;
+            }
+
             default:
               break;
           }
@@ -195,5 +300,7 @@ export function useGroupWebSocket(): UseGroupWebSocketResult {
     dismissCmoWarning,
     sweepLeaderAlert,
     dismissSweepLeaderAlert,
+    messages,
+    sendGroupMessage,
   };
 }

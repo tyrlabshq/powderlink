@@ -14,6 +14,7 @@ import emergencyRoutes from './routes/emergency';
 import rideRoutes from './routes/rides';
 import garminRoutes from './routes/garmin';
 import { addClient, removeClient, broadcastToGroup, WsClient } from './ws';
+import { redis } from './redis';
 import { checkDMS } from './services/dms';
 import { checkCountMeOut } from './services/countMeOut';
 import { pollDueGarminFeeds } from './services/garmin';
@@ -77,6 +78,21 @@ wss.on('connection', (ws) => {
 
       ws.send(JSON.stringify({ type: 'joined', groupId: msg.groupId }));
       broadcastToGroup(msg.groupId, { type: 'rider_joined', riderId: msg.riderId }, msg.riderId);
+
+      // Send recent message history to late joiners
+      const historyKey = `group_messages:${msg.groupId}`;
+      redis.lrange(historyKey, 0, 49)
+        .then((items: string[]) => {
+          if (items.length === 0) return;
+          const messages = items
+            .map((item: string) => { try { return JSON.parse(item); } catch { return null; } })
+            .filter(Boolean)
+            .reverse(); // LPUSH = newest first, send oldest first
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'group_message_history', messages }));
+          }
+        })
+        .catch((err: Error) => console.error('Redis group_message_history error:', err));
     }
 
     if (msg.type === 'location_update' && client) {
@@ -89,6 +105,33 @@ wss.on('connection', (ws) => {
         source: msg.source,
         timestamp: Date.now(),
       }, client.riderId);
+    }
+
+    if (msg.type === 'group_message' && client) {
+      const rawText = typeof msg.text === 'string' ? msg.text.trim().slice(0, 200) : '';
+      if (!rawText) return;
+
+      const messagePayload = {
+        type: 'group_message',
+        messageId: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        riderId: client.riderId,
+        riderName: typeof msg.riderName === 'string' ? msg.riderName.trim().slice(0, 50) : 'Rider',
+        text: rawText,
+        preset: typeof msg.preset === 'string' ? msg.preset : null,
+        timestamp: Date.now(),
+      };
+
+      // Broadcast to all group members including sender
+      broadcastToGroup(client.groupId, messagePayload);
+
+      // Store last 50 messages in Redis (fire-and-forget)
+      const redisKey = `group_messages:${client.groupId}`;
+      redis.pipeline()
+        .lpush(redisKey, JSON.stringify(messagePayload))
+        .ltrim(redisKey, 0, 49)
+        .expire(redisKey, 86400) // 24h TTL
+        .exec()
+        .catch((err: Error) => console.error('Redis group_message store error:', err));
     }
   });
 

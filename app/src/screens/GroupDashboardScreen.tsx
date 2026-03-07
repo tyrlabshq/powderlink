@@ -4,6 +4,7 @@ import {
   Alert, ActivityIndicator, Share, Clipboard,
   Modal, TextInput, ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { fetchMembers, leaveGroup, disbandGroup, assignMemberRole } from '../api/groups';
@@ -12,6 +13,8 @@ import { startRide, endRide, getActiveRide } from '../api/rides';
 import { startCountMeOut, cancelCountMeOut, getCountMeOutStatus } from '../api/countMeOut';
 import type { CMODuration } from '../api/countMeOut';
 import { useGroup } from '../context/GroupContext';
+import { useGroupWebSocket } from '../hooks/useGroupWebSocket';
+import { GroupMessagingPanel } from '../components/GroupMessagingPanel';
 import { colors } from '../theme/colors';
 import type { GroupStackParamList } from '../navigation/AppNavigator';
 import type { Ride } from '../api/rides';
@@ -35,6 +38,24 @@ export default function GroupDashboardScreen() {
   const [cmoSelectedDuration, setCmoSelectedDuration] = useState<CMODuration>(30);
   const [cmoNote, setCmoNote] = useState('');
   const [cmoLoading, setCmoLoading] = useState(false);
+
+  // Rider identity — loaded from AsyncStorage (set during onboarding/auth)
+  const [riderId, setRiderId] = useState<string | undefined>(undefined);
+  const [riderName, setRiderName] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    AsyncStorage.multiGet(['riderId', 'riderName']).then((pairs) => {
+      const id = pairs.find(([k]) => k === 'riderId')?.[1] ?? undefined;
+      const name = pairs.find(([k]) => k === 'riderName')?.[1] ?? undefined;
+      setRiderId(id ?? undefined);
+      setRiderName(name ?? undefined);
+    }).catch(() => {/* non-fatal */});
+  }, []);
+
+  // Group WebSocket — enables in-ride messaging (auto-joins group when connected)
+  const { messages: groupMessages, sendGroupMessage, connected: wsConnected } = useGroupWebSocket(
+    group && riderId ? { groupId: group.groupId, riderId, riderName } : undefined,
+  );
 
   const loadMembers = useCallback(async () => {
     if (!group) return;
@@ -352,6 +373,16 @@ export default function GroupDashboardScreen() {
             <Text style={styles.rideTimer}>{formatElapsed(elapsed)}</Text>
           </View>
         </View>
+      )}
+
+      {/* In-Ride Group Messaging — visible when a ride is active */}
+      {activeRideId && (
+        <GroupMessagingPanel
+          messages={groupMessages}
+          onSend={sendGroupMessage}
+          connected={wsConnected}
+          currentRiderId={riderId}
+        />
       )}
 
       {/* Members */}

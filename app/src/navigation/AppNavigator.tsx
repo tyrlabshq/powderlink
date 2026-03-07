@@ -11,6 +11,7 @@ import GroupHomeScreen from '../screens/GroupHomeScreen';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
 import JoinGroupScreen from '../screens/JoinGroupScreen';
 import GroupDashboardScreen from '../screens/GroupDashboardScreen';
+import GroupRadarScreen from '../screens/GroupRadarScreen';
 import RideSummaryScreen from '../screens/RideSummaryScreen';
 import RideHistoryScreen from '../screens/RideHistoryScreen';
 import RideReplayScreen from '../screens/RideReplayScreen';
@@ -27,6 +28,7 @@ export type GroupStackParamList = {
   CreateGroup: undefined;
   JoinGroup: undefined;
   GroupDashboard: undefined;
+  GroupRadar: undefined;
   RideSummary: { ride: Ride };
 };
 
@@ -47,6 +49,7 @@ function GroupNavigator() {
       <GroupStack.Screen name="CreateGroup" component={CreateGroupScreen} options={{ title: 'Create Group' }} />
       <GroupStack.Screen name="JoinGroup" component={JoinGroupScreen} options={{ title: 'Join Group' }} />
       <GroupStack.Screen name="GroupDashboard" component={GroupDashboardScreen} options={{ headerShown: false }} />
+      <GroupStack.Screen name="GroupRadar" component={GroupRadarScreen} options={{ title: 'Group Radar' }} />
       <GroupStack.Screen name="RideSummary" component={RideSummaryScreen} options={{ title: 'Ride Summary', headerShown: false }} />
     </GroupStack.Navigator>
   );

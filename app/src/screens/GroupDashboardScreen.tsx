@@ -468,6 +468,10 @@ export default function GroupDashboardScreen() {
           <Text style={styles.shareBtnText}>Share Code</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.radarBtn} onPress={() => navigation.navigate('GroupRadar')}>
+          <Text style={styles.radarBtnText}>📡 Find Members (Radar)</Text>
+        </TouchableOpacity>
+
         {/* Count Me Out */}
         {cmoActive ? (
           <TouchableOpacity
@@ -634,6 +638,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   shareBtnText: { color: '#000', fontSize: 16, fontWeight: '700' },
+  radarBtn: {
+    backgroundColor: 'rgba(0,170,255,0.12)',
+    borderColor: colors.accent,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  radarBtnText: { color: colors.accent, fontSize: 16, fontWeight: '700' },
   dangerBtn: {
     borderColor: colors.danger,
     borderWidth: 1.5,

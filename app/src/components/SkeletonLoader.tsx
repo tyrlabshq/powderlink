@@ -83,6 +83,74 @@ export function MapLoadingSkeleton() {
   );
 }
 
+/**
+ * Group dashboard skeleton — member list + ride controls.
+ */
+export function GroupDashboardSkeleton() {
+  return (
+    <View style={{ padding: 16, paddingTop: 24 }}>
+      {/* Header */}
+      <SkeletonBlock width="60%" height={22} style={{ marginBottom: 6 }} />
+      <SkeletonBlock width="40%" height={14} style={{ marginBottom: 24 }} />
+      {/* Ride button placeholder */}
+      <SkeletonBlock width="100%" height={52} borderRadius={14} style={{ marginBottom: 20 }} />
+      {/* Member rows */}
+      {[0, 1, 2, 3].map((i) => (
+        <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
+          <SkeletonBlock width={40} height={40} borderRadius={20} style={{ marginRight: 12 }} />
+          <View style={{ flex: 1 }}>
+            <SkeletonBlock width="50%" height={13} style={{ marginBottom: 6 }} />
+            <SkeletonBlock width="35%" height={11} />
+          </View>
+          <SkeletonBlock width={48} height={20} borderRadius={8} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/**
+ * Profile skeleton — avatar + menu rows loading.
+ */
+export function ProfileSkeleton() {
+  return (
+    <View style={{ padding: 16, paddingTop: 60, alignItems: 'center' }}>
+      <SkeletonBlock width={80} height={80} borderRadius={40} style={{ marginBottom: 16 }} />
+      <SkeletonBlock width="50%" height={18} style={{ marginBottom: 8 }} />
+      <SkeletonBlock width="35%" height={13} style={{ marginBottom: 32 }} />
+      {[0, 1, 2, 3].map((i) => (
+        <View key={i} style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+          <SkeletonBlock width={40} height={40} borderRadius={10} style={{ marginRight: 12 }} />
+          <View style={{ flex: 1 }}>
+            <SkeletonBlock width="55%" height={14} style={{ marginBottom: 6 }} />
+            <SkeletonBlock width="80%" height={11} />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/**
+ * Conditions panel skeleton — list of trail condition reports.
+ */
+export function ConditionsSkeleton() {
+  return (
+    <View style={{ padding: 16 }}>
+      {[0, 1, 2].map((i) => (
+        <View key={i} style={{ marginBottom: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <SkeletonBlock width={10} height={10} borderRadius={5} style={{ marginRight: 8 }} />
+            <SkeletonBlock width="45%" height={13} />
+          </View>
+          <SkeletonBlock width="80%" height={11} style={{ marginBottom: 4 }} />
+          <SkeletonBlock width="60%" height={11} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const skeletonStyles = StyleSheet.create({
   container: {
     padding: 16,

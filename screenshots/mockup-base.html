@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TrailGuard Screenshot Mockups</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; font-family: -apple-system, 'SF Pro Display', sans-serif; padding: 40px; }
+  h1 { color: #E85D04; font-size: 28px; margin-bottom: 8px; }
+  p { color: #8A9BB0; font-size: 14px; margin-bottom: 40px; }
+  .grid { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .phone {
+    width: 390px; height: 844px;
+    background: #080c14;
+    border-radius: 48px;
+    border: 6px solid #1a1a2e;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 34px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 50px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px 0;
+    z-index: 9;
+  }
+  .status-time { color: #F8F9FA; font-size: 15px; font-weight: 600; }
+  .status-icons { color: #F8F9FA; font-size: 12px; }
+  .screen-label {
+    position: absolute; bottom: -36px; left: 0; right: 0;
+    text-align: center; color: #8A9BB0; font-size: 13px;
+  }
+  .wrap { position: relative; margin-bottom: 56px; }
+</style>
+</head>
+<body>
+<h1>⛰️ TrailGuard — App Store Screenshots</h1>
+<p>iPhone 15 Pro Max (6.7") · Outdoor palette · Trail-inspired design</p>
+<div class="grid" id="screens"></div>
+<script>
+const colors = {
+  bg: '#080c14', surface: '#0d1520',
+  primary: '#1B4332', primaryLight: '#40916C',
+  accent: '#E85D04', accentAlt: '#00aaff',
+  success: '#40916C', danger: '#ff3355',
+  warning: '#ffaa00', text: '#F8F9FA',
+  textDim: '#8A9BB0', textMuted: '#495057',
+  border: 'rgba(255,255,255,0.1)',
+};
+
+const screens = [
+  {
+    id: 'map',
+    label: 'Trail Map',
+    render: () => `
+      <div style="position:absolute;inset:0;background:linear-gradient(170deg,#1a2e1a 0%,#0d1a0d 40%,#080c14 100%);">
+        <!-- Topographic lines -->
+        <svg style="position:absolute;inset:0;opacity:0.12" width="390" height="844">
+          ${[80,160,240,320,400,480,560].map(y => `<ellipse cx="195" cy="${y}" rx="180" ry="${40 + y/10}" fill="none" stroke="#40916C" stroke-width="1"/>`).join('')}
+        </svg>
+        <!-- Trail paths -->
+        <svg style="position:absolute;inset:0" width="390" height="844">
+          <path d="M 60 700 Q 150 580 200 460 Q 250 340 280 200" fill="none" stroke="#E85D04" stroke-width="3" stroke-dasharray="8,4" opacity="0.9"/>
+          <path d="M 200 460 Q 280 420 340 380" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.6"/>
+        </svg>
+        <!-- Member pins -->
+        <div style="position:absolute;top:380;left:180;width:28px;height:28px;background:#E85D04;border-radius:14px;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:14px;">🏍</div>
+        <div style="position:absolute;top:320;left:240;width:24px;height:24px;background:#40916C;border-radius:12px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px;">🏍</div>
+        <!-- HUD top -->
+        <div style="position:absolute;top:60;left:16;right:16;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="background:rgba(13,21,32,0.85);backdrop-filter:blur(8px);border-radius:14px;padding:10px 14px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="color:#8A9BB0;font-size:10px;letter-spacing:0.5px;">ELEVATION</div>
+            <div style="color:#F8F9FA;font-size:20px;font-weight:700;">4,280<span style="font-size:11px;color:#8A9BB0;"> ft</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:rgba(13,21,32,0.85);width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">🗺</div>
+            <div style="background:rgba(13,21,32,0.85);width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">📍</div>
+            <div style="background:rgba(13,21,32,0.85);width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;">📡</div>
+          </div>
+        </div>
+        <!-- Bottom sheet -->
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(13,21,32,0.95);backdrop-filter:blur(16px);border-radius:24px 24px 0 0;padding:20px 20px 40px;border-top:1px solid rgba(255,255,255,0.1);">
+          <div style="width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 16px;"></div>
+          <div style="color:#F8F9FA;font-size:16px;font-weight:700;margin-bottom:4px;">🏔 Tahoe Rim Trail</div>
+          <div style="color:#8A9BB0;font-size:12px;margin-bottom:16px;">Group ride · 3 riders active</div>
+          <div style="display:flex;gap:8px;">
+            <div style="flex:1;background:#1B4332;border-radius:10px;padding:10px;text-align:center;">
+              <div style="color:#40916C;font-size:11px;">DISTANCE</div>
+              <div style="color:#F8F9FA;font-size:18px;font-weight:700;">12.4 mi</div>
+            </div>
+            <div style="flex:1;background:#1B4332;border-radius:10px;padding:10px;text-align:center;">
+              <div style="color:#40916C;font-size:11px;">SPEED</div>
+              <div style="color:#F8F9FA;font-size:18px;font-weight:700;">18 mph</div>
+            </div>
+            <div style="flex:1;background:#1B4332;border-radius:10px;padding:10px;text-align:center;">
+              <div style="color:#40916C;font-size:11px;">TIME</div>
+              <div style="color:#F8F9FA;font-size:18px;font-weight:700;">1:24</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  {
+    id: 'trail-detail',
+    label: 'Trail Detail',
+    render: () => `
+      <div style="position:absolute;inset:0;background:#080c14;overflow:hidden;">
+        <!-- Hero image area -->
+        <div style="height:260px;background:linear-gradient(135deg,#1B4332 0%,#2d6a4f 40%,#1a3a20 100%);position:relative;">
+          <svg style="position:absolute;inset:0;opacity:0.2" width="390" height="260">
+            ${[40,80,120,160,200].map(y=>`<path d="M0 ${y} Q 80 ${y-20} 195 ${y+10} Q 310 ${y+30} 390 ${y}" fill="none" stroke="#40916C" stroke-width="1"/>`).join('')}
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:56px;opacity:0.5;">⛰️</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,#080c14);"></div>
+          <div style="position:absolute;top:60px;right:16px;background:rgba(27,67,50,0.9);border-radius:20px;padding:6px 12px;border:1px solid #40916C;">
+            <span style="color:#40916C;font-size:12px;font-weight:600;">● GROOMED</span>
+          </div>
+        </div>
+        <!-- Content -->
+        <div style="padding:20px;">
+          <div style="color:#F8F9FA;font-size:22px;font-weight:700;margin-bottom:4px;">Wolverine Trail</div>
+          <div style="color:#8A9BB0;font-size:13px;margin-bottom:16px;">Upper Peninsula, Michigan · Updated 2h ago</div>
+          <!-- Stat row -->
+          <div style="display:flex;gap:10px;margin-bottom:20px;">
+            ${[['📏','18.2 mi','LENGTH'],['📈','1,240 ft','CLIMB'],['⭐','4.7','RATING']].map(([icon,val,label])=>`
+            <div style="flex:1;background:#0d1520;border-radius:12px;padding:12px 8px;text-align:center;border:1px solid rgba(255,255,255,0.07);">
+              <div style="font-size:18px;margin-bottom:4px;">${icon}</div>
+              <div style="color:#F8F9FA;font-size:14px;font-weight:700;">${val}</div>
+              <div style="color:#8A9BB0;font-size:9px;letter-spacing:0.5px;">${label}</div>
+            </div>`).join('')}
+          </div>
+          <!-- Condition tags -->
+          <div style="margin-bottom:20px;">
+            <div style="color:#F8F9FA;font-size:14px;font-weight:600;margin-bottom:10px;">Trail Conditions</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${[['🏔 Groomed','#40916C'],['❄️ Powder','#00aaff'],['⚠️ Icy Patches','#ffaa00']].map(([label,color])=>`<span style="background:${color}22;color:${color};border:1px solid ${color}44;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;">${label}</span>`).join('')}
+            </div>
+          </div>
+          <!-- Reports -->
+          <div style="color:#F8F9FA;font-size:14px;font-weight:600;margin-bottom:10px;">Recent Reports</div>
+          ${[['Jake M.','Powder conditions near mile 8. Watch the creek crossing.','2h ago'],['Sarah K.','Groomed this morning — fast!','4h ago']].map(([name,msg,time])=>`
+          <div style="background:#0d1520;border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="color:#F8F9FA;font-size:12px;font-weight:600;">${name}</span>
+              <span style="color:#8A9BB0;font-size:11px;">${time}</span>
+            </div>
+            <div style="color:#8A9BB0;font-size:12px;line-height:1.4;">${msg}</div>
+          </div>`).join('')}
+        </div>
+        <!-- CTA -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 20px 40px;background:linear-gradient(transparent,#080c14 30%);">
+          <div style="background:#E85D04;border-radius:14px;padding:16px;text-align:center;">
+            <span style="color:#fff;font-size:16px;font-weight:700;">🏁 Start Ride on This Trail</span>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  {
+    id: 'trip-tracking',
+    label: 'Trip Tracking',
+    render: () => `
+      <div style="position:absolute;inset:0;background:#080c14;">
+        <!-- Active ride header -->
+        <div style="background:linear-gradient(135deg,#1B4332,#0d1520);padding:60px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div>
+              <div style="color:#40916C;font-size:11px;letter-spacing:1px;font-weight:600;">ACTIVE RIDE</div>
+              <div style="color:#F8F9FA;font-size:20px;font-weight:700;">Wolverine Trail</div>
+            </div>
+            <div style="background:#E85D04;border-radius:20px;padding:6px 14px;animation:pulse 2s infinite;">
+              <span style="color:#fff;font-size:12px;font-weight:700;">● LIVE</span>
+            </div>
+          </div>
+          <!-- Big stats -->
+          <div style="display:flex;gap:12px;margin-top:16px;">
+            <div style="flex:1;text-align:center;">
+              <div style="color:#F8F9FA;font-size:36px;font-weight:700;line-height:1;">1:24</div>
+              <div style="color:#8A9BB0;font-size:11px;margin-top:2px;">ELAPSED</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+            <div style="flex:1;text-align:center;">
+              <div style="color:#F8F9FA;font-size:36px;font-weight:700;line-height:1;">12.4</div>
+              <div style="color:#8A9BB0;font-size:11px;margin-top:2px;">MILES</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+            <div style="flex:1;text-align:center;">
+              <div style="color:#E85D04;font-size:36px;font-weight:700;line-height:1;">18</div>
+              <div style="color:#8A9BB0;font-size:11px;margin-top:2px;">MPH</div>
+            </div>
+          </div>
+        </div>
+        <!-- Elevation chart -->
+        <div style="padding:16px 20px;">
+          <div style="color:#F8F9FA;font-size:14px;font-weight:600;margin-bottom:10px;">Elevation Profile</div>
+          <div style="background:#0d1520;border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
+            <svg width="310" height="80" viewBox="0 0 310 80">
+              <defs>
+                <linearGradient id="elev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#40916C" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#40916C" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M 0 70 Q 40 60 80 40 Q 120 20 155 30 Q 190 40 220 25 Q 260 10 310 20 L 310 80 L 0 80 Z" fill="url(#elev)"/>
+              <path d="M 0 70 Q 40 60 80 40 Q 120 20 155 30 Q 190 40 220 25 Q 260 10 310 20" fill="none" stroke="#40916C" stroke-width="2"/>
+              <circle cx="155" cy="30" r="5" fill="#E85D04"/>
+            </svg>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;">
+              <span style="color:#8A9BB0;font-size:10px;">Start</span>
+              <span style="color:#E85D04;font-size:10px;">You are here</span>
+              <span style="color:#8A9BB0;font-size:10px;">Summit</span>
+            </div>
+          </div>
+        </div>
+        <!-- Group members -->
+        <div style="padding:0 20px;">
+          <div style="color:#F8F9FA;font-size:14px;font-weight:600;margin-bottom:10px;">Group · 3 Riders</div>
+          ${[['🏍','You','4,280 ft · 18 mph','E85D04'],['🏍','Jake M.','4,120 ft · 14 mph','40916C'],['🏍','Sarah K.','3,980 ft · 22 mph','00aaff']].map(([icon,name,info,color])=>`
+          <div style="background:#0d1520;border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;background:#${color}33;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #${color};">${icon}</div>
+            <div style="flex:1;">
+              <div style="color:#F8F9FA;font-size:13px;font-weight:600;">${name}</div>
+              <div style="color:#8A9BB0;font-size:11px;">${info}</div>
+            </div>
+            <div style="width:8px;height:8px;background:#${color};border-radius:4px;"></div>
+          </div>`).join('')}
+        </div>
+        <!-- End ride button -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 20px 40px;">
+          <div style="background:#ff3355;border-radius:14px;padding:16px;text-align:center;">
+            <span style="color:#fff;font-size:16px;font-weight:700;">■ End Ride</span>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  {
+    id: 'conditions',
+    label: 'Conditions Report',
+    render: () => `
+      <div style="position:absolute;inset:0;background:#080c14;overflow:hidden;">
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#1B4332,#0d1520);padding:60px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="color:#40916C;font-size:11px;letter-spacing:1px;font-weight:600;margin-bottom:4px;">TRAIL CONDITIONS</div>
+          <div style="color:#F8F9FA;font-size:22px;font-weight:700;margin-bottom:4px;">Upper Peninsula</div>
+          <div style="color:#8A9BB0;font-size:13px;">15 reports in the last 24 hours</div>
+        </div>
+        <!-- Filter chips -->
+        <div style="padding:16px 20px 8px;display:flex;gap:8px;overflow-x:auto;">
+          ${[['All','E85D04',true],['Groomed','40916C',false],['Powder','00aaff',false],['Icy','ffaa00',false]].map(([label,color,active])=>`<div style="background:${active?'#'+color:'rgba(255,255,255,0.06)'};border-radius:20px;padding:6px 14px;border:1px solid ${active?'#'+color:'rgba(255,255,255,0.1)'};flex-shrink:0;"><span style="color:${active?'#fff':'#8A9BB0'};font-size:12px;font-weight:${active?'700':'400'};">${label}</span></div>`).join('')}
+        </div>
+        <!-- Reports list -->
+        <div style="padding:8px 20px;overflow-y:auto;">
+          ${[
+            {trail:'Wolverine Trail',status:'Groomed',color:'40916C',icon:'🏔',user:'Jake M.',time:'1h ago',msg:'Freshly groomed! Powder is excellent near the summit. Creek crossing is clear.',rating:5},
+            {trail:'Porcupine Mountains',status:'Powder',color:'00aaff',icon:'❄️',user:'Sarah K.',time:'2h ago',msg:'Deep powder on the north face. Visibility good. Recommend layering up.',rating:5},
+            {trail:'Pictured Rocks',status:'Icy',color:'ffaa00',icon:'⚠️',user:'Mike R.',time:'3h ago',msg:'Watch out at mile 6 — sheet ice on the descent. Otherwise good conditions.',rating:3},
+            {trail:'Keweenaw Trail',status:'Closed',color:'ff3355',icon:'🚫',user:'DNR Alert',time:'5h ago',msg:'Trail closed due to fallen trees from last night\'s storm. Reopen TBD.',rating:1},
+          ].map(r=>`
+          <div style="background:#0d1520;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.07);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:8px;height:8px;background:#${r.color};border-radius:4px;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="color:#F8F9FA;font-size:13px;font-weight:700;">${r.trail}</div>
+              </div>
+              <span style="background:#${r.color}22;color:#${r.color};border:1px solid #${r.color}44;border-radius:12px;padding:3px 8px;font-size:10px;font-weight:600;">${r.icon} ${r.status}</span>
+            </div>
+            <div style="color:#8A9BB0;font-size:12px;line-height:1.4;margin-bottom:8px;">${r.msg}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:#495057;font-size:11px;">${r.user} · ${r.time}</span>
+              <span style="color:#ffaa00;font-size:11px;">${'⭐'.repeat(r.rating)}</span>
+            </div>
+          </div>`).join('')}
+        </div>
+        <!-- FAB -->
+        <div style="position:absolute;bottom:40px;right:20px;width:56px;height:56px;background:#E85D04;border-radius:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(232,93,4,0.4);font-size:22px;">📝</div>
+      </div>
+    `,
+  },
+];
+
+const container = document.getElementById('screens');
+screens.forEach(screen => {
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  wrap.innerHTML = `
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">●●● 5G 🔋</span>
+      </div>
+      ${screen.render()}
+    </div>
+    <div class="screen-label">${screen.label}</div>
+  `;
+  container.appendChild(wrap);
+});
+</script>
+</body>
+</html>

@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { useGroup } from '../context/GroupContext';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
+import { GroupDashboardSkeleton } from '../components/SkeletonLoader';
 import type { GroupStackParamList } from '../navigation/AppNavigator';
 
 type Nav = StackNavigationProp<GroupStackParamList, 'GroupHome'>;
@@ -15,8 +16,8 @@ export default function GroupHomeScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={colors.accent} />
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <GroupDashboardSkeleton />
       </View>
     );
   }

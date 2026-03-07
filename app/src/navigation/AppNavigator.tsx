@@ -13,9 +13,11 @@ import JoinGroupScreen from '../screens/JoinGroupScreen';
 import GroupDashboardScreen from '../screens/GroupDashboardScreen';
 import RideSummaryScreen from '../screens/RideSummaryScreen';
 import RideHistoryScreen from '../screens/RideHistoryScreen';
+import RideReplayScreen from '../screens/RideReplayScreen';
 import { GroupProvider } from '../context/GroupContext';
 import { colors } from '../theme/colors';
 import type { Ride } from '../api/rides';
+import type { RecordedRide } from '../services/RideRecordingService';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,6 +59,7 @@ export type ProfileStackParamList = {
   RideHistory: undefined;
   OfflineMaps: undefined;
   RideSummaryFromHistory: { ride: Ride };
+  RideReplay: { rideId: string; ride?: RecordedRide };
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
@@ -80,6 +83,11 @@ function ProfileNavigator() {
         name="RideSummaryFromHistory"
         component={RideSummaryScreen}
         options={{ title: 'Ride Details', headerShown: false }}
+      />
+      <ProfileStack.Screen
+        name="RideReplay"
+        component={RideReplayScreen}
+        options={{ headerShown: false }}
       />
     </ProfileStack.Navigator>
   );

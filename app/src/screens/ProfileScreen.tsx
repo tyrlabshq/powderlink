@@ -36,6 +36,18 @@ export default function ProfileScreen() {
 
       <TouchableOpacity
         style={styles.menuItem}
+        onPress={() => navigation.navigate('RideReplay', { rideId: '__latest__' })}
+      >
+        <Text style={styles.menuIcon}>▶️</Text>
+        <View style={styles.menuText}>
+          <Text style={styles.menuTitle}>Ride Replay</Text>
+          <Text style={styles.menuSubtitle}>3D flyover of your recorded GPS tracks</Text>
+        </View>
+        <Text style={styles.menuArrow}>›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.menuItem}
         onPress={() => navigation.navigate('EmergencyInfo')}
       >
         <Text style={styles.menuIcon}>🆘</Text>

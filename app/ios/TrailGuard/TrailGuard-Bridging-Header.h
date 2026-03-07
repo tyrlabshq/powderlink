@@ -3,7 +3,6 @@
 //  TrailGuard
 //
 //  Exposes Objective-C headers to Swift.
+//  Note: React Native headers are NOT imported here — they are only used in
+//  the ObjC .m files (RCTSatelliteModule.m) which handle the RN bridge.
 //
-
-#import <React/RCTBridgeModule.h>
-#import <React/RCTEventEmitter.h>

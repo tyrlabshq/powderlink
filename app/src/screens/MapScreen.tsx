@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapboxGL from '@rnmapbox/maps';
 import { colors } from '../theme/colors';
 import { useGroupWebSocket, type MemberLocation } from '../hooks/useGroupWebSocket';
+import { useMeshNetwork } from '../hooks/useMeshNetwork';
 import { MemberPin } from '../components/MemberPin';
 import { MemberListPanel } from '../components/MemberListPanel';
 import { getAvalancheGeoJSON, type AvalancheGeoJSON, cacheAge } from '../services/avalanche';
@@ -478,6 +479,9 @@ export default function MapScreen() {
     dismissSweepLeaderAlert,
   } = useGroupWebSocket();
 
+  // Mesh networking — works offline when WebSocket is unavailable
+  const { meshMembers, meshConnected, meshPeerCount } = useMeshNetwork();
+
   const [selectedMember, setSelectedMember] = useState<MemberLocation | null>(null);
   const [panelVisible, setPanelVisible] = useState(false);
   const [layerPanelVisible, setLayerPanelVisible] = useState(false);
@@ -516,7 +520,11 @@ export default function MapScreen() {
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const autoDownloadDone = useRef(false);
 
-  const memberList = Array.from(members.values());
+  // Merge WS members + mesh members (mesh fills in when internet is down)
+  // WS takes precedence for any member that has both sources
+  const mergedMembers = new Map<string, MemberLocation>(meshMembers);
+  for (const [id, m] of members) mergedMembers.set(id, m);
+  const memberList = Array.from(mergedMembers.values());
 
   // Load avalanche data on mount
   useEffect(() => {
@@ -646,6 +654,11 @@ export default function MapScreen() {
         <Text style={[styles.hudText, { color: connected ? colors.success : colors.danger }]}>
           {connected ? 'LIVE' : 'OFFLINE'}
         </Text>
+        {!connected && meshConnected && (
+          <Text style={[styles.hudTextSm, { color: colors.accent }]}>
+            📡 Mesh {meshPeerCount}p
+          </Text>
+        )}
         <Text style={styles.hudText}>Group {memberList.length}</Text>
         {avalancheData && <Text style={styles.hudTextSm}>Avalanche {cacheAge(avalancheData)}</Text>}
         {sweepGap && sweepGap.alert && (

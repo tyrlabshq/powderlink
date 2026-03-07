@@ -15,6 +15,7 @@ import type { CMODuration } from '../api/countMeOut';
 import { useGroup } from '../context/GroupContext';
 import { useGroupWebSocket } from '../hooks/useGroupWebSocket';
 import { GroupMessagingPanel } from '../components/GroupMessagingPanel';
+import { useMeshNetwork } from '../hooks/useMeshNetwork';
 import { colors } from '../theme/colors';
 import type { GroupStackParamList } from '../navigation/AppNavigator';
 import type { Ride } from '../api/rides';
@@ -55,6 +56,37 @@ export default function GroupDashboardScreen() {
   // Group WebSocket — enables in-ride messaging (auto-joins group when connected)
   const { messages: groupMessages, sendGroupMessage, connected: wsConnected } = useGroupWebSocket(
     group && riderId ? { groupId: group.groupId, riderId, riderName } : undefined,
+  );
+
+  // Mesh network — offline group messaging and location sharing
+  const {
+    meshMessages,
+    meshConnected,
+    meshPeerCount,
+    sendMeshMessage,
+  } = useMeshNetwork(riderId ? { riderId, riderName } : undefined);
+
+  // Merge WS + mesh messages and deduplicate by messageId
+  const allMessages = React.useMemo(() => {
+    const seen = new Set<string>();
+    const merged = [...groupMessages, ...meshMessages].filter((m) => {
+      if (seen.has(m.messageId)) return false;
+      seen.add(m.messageId);
+      return true;
+    });
+    return merged.sort((a, b) => a.timestamp - b.timestamp);
+  }, [groupMessages, meshMessages]);
+
+  // When offline, route messages through mesh instead
+  const handleSendMessage = React.useCallback(
+    (text: string, preset?: string | null) => {
+      if (wsConnected) {
+        sendGroupMessage(text, preset ?? null);
+      } else {
+        sendMeshMessage(text, preset ?? null);
+      }
+    },
+    [wsConnected, sendGroupMessage, sendMeshMessage],
   );
 
   const loadMembers = useCallback(async () => {
@@ -375,13 +407,15 @@ export default function GroupDashboardScreen() {
         </View>
       )}
 
-      {/* In-Ride Group Messaging — visible when a ride is active */}
+      {/* In-Ride Group Messaging — WS primary, mesh fallback when offline */}
       {activeRideId && (
         <GroupMessagingPanel
-          messages={groupMessages}
-          onSend={sendGroupMessage}
-          connected={wsConnected}
+          messages={allMessages}
+          onSend={handleSendMessage}
+          connected={wsConnected || meshConnected}
           currentRiderId={riderId}
+          offlineMode={!wsConnected && meshConnected}
+          meshPeerCount={meshPeerCount}
         />
       )}
 

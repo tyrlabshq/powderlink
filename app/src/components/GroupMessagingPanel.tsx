@@ -40,10 +40,14 @@ interface GroupMessagingPanelProps {
   messages: GroupMessage[];
   /** Send a message — handles offline queuing internally in the hook. */
   onSend: (text: string, preset?: string | null) => void;
-  /** Whether the WebSocket is currently connected. */
+  /** Whether the WebSocket or mesh is currently connected. */
   connected: boolean;
   /** Current rider's ID — used to style own messages differently. */
   currentRiderId?: string;
+  /** True when running on mesh only (no internet). Shows mesh indicator. */
+  offlineMode?: boolean;
+  /** Number of directly connected mesh peers. */
+  meshPeerCount?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -55,6 +59,8 @@ export function GroupMessagingPanel({
   onSend,
   connected,
   currentRiderId,
+  offlineMode = false,
+  meshPeerCount = 0,
 }: GroupMessagingPanelProps) {
   const [expanded, setExpanded] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -182,10 +188,15 @@ export function GroupMessagingPanel({
             </TouchableOpacity>
           </View>
 
-          {/* Offline indicator */}
-          {!connected && (
+          {/* Connectivity indicator */}
+          {!connected && !offlineMode && (
             <Text style={styles.offlineNote}>
               ⚡ Offline — messages will send when reconnected
+            </Text>
+          )}
+          {offlineMode && (
+            <Text style={[styles.offlineNote, styles.meshNote]}>
+              📡 Mesh mode — {meshPeerCount} peer{meshPeerCount !== 1 ? 's' : ''} nearby · no internet needed
             </Text>
           )}
         </View>
@@ -379,5 +390,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 10,
     paddingHorizontal: 12,
+  },
+  meshNote: {
+    color: '#00aaff',
   },
 });

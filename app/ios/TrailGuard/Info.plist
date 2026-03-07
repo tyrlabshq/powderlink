@@ -40,5 +40,17 @@
 	</array>
 	<key>MBXAccessToken</key>
 	<string>pk.eyJ1IjoidHlyOSIsImEiOiJjbW1mdzRwbG8wY24xMnFuZHYwN2poaXdwIn0.7He6Sr04fkb6EjN9Xq35yw</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>TrailGuard uses local network and Bluetooth to connect your device directly with nearby riders for offline group tracking when there's no internet.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_tg-mesh._tcp</string>
+		<string>_tg-mesh._udp</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+	</array>
 </dict>
 </plist>

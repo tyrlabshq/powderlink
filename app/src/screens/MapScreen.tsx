@@ -295,12 +295,26 @@ function POILayer({ pois }: { pois: POI[] }) {
 // ---------------------------------------------------------------------------
 function ConditionLayer({ reports }: { reports: TrailConditionReport[] }) {
   if (reports.length === 0) return null;
+
+  function getDotColor(r: TrailConditionReport): string {
+    if (r.reportType === 'condition' && r.condition) {
+      return CONDITION_DOT_COLORS[r.condition] ?? '#888888';
+    }
+    if (r.reportType === 'hazard') return '#ff8800';
+    if (r.reportType === 'snow_depth') return '#00aaff';
+    return '#888888';
+  }
+
   const geojson: GeoJSON.FeatureCollection = {
     type: 'FeatureCollection',
     features: reports.map((r) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [r.lng, r.lat] },
-      properties: { condition: r.condition },
+      properties: {
+        condition: r.condition ?? '',
+        reportType: r.reportType,
+        dotColor: getDotColor(r),
+      },
     })),
   };
   return (
@@ -309,16 +323,7 @@ function ConditionLayer({ reports }: { reports: TrailConditionReport[] }) {
         id="conditions-circles"
         style={{
           circleRadius: ['interpolate', ['linear'], ['zoom'], 8, 5, 14, 10] as any,
-          circleColor: [
-            'match', ['get', 'condition'],
-            'groomed', CONDITION_DOT_COLORS.groomed,
-            'powder', CONDITION_DOT_COLORS.powder,
-            'icy', CONDITION_DOT_COLORS.icy,
-            'closed', CONDITION_DOT_COLORS.closed,
-            'tracked_out', CONDITION_DOT_COLORS.tracked_out,
-            'wet_snow', CONDITION_DOT_COLORS.wet_snow,
-            '#888888',
-          ] as any,
+          circleColor: ['get', 'dotColor'] as any,
           circleOpacity: 0.9,
           circleStrokeColor: 'rgba(0,0,0,0.5)',
           circleStrokeWidth: 1,

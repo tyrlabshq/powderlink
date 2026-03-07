@@ -48,6 +48,18 @@ export default function ProfileScreen() {
 
       <TouchableOpacity
         style={styles.menuItem}
+        onPress={() => navigation.navigate('CompassNav')}
+      >
+        <Text style={styles.menuIcon}>🧭</Text>
+        <View style={styles.menuText}>
+          <Text style={styles.menuTitle}>Compass Navigation</Text>
+          <Text style={styles.menuSubtitle}>GPS + compass offline mode — no signal needed</Text>
+        </View>
+        <Text style={styles.menuArrow}>›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.menuItem}
         onPress={() => navigation.navigate('EmergencyInfo')}
       >
         <Text style={styles.menuIcon}>🆘</Text>

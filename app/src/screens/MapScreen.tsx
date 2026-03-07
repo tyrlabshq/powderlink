@@ -25,6 +25,7 @@ import { suggestRoutes, formatDistanceM, type RouteSuggestion } from '../service
 import { fetchNearbyConditions, type TrailConditionReport } from '../api/trailConditions';
 import { TrailConditionModal } from '../components/TrailConditionModal';
 import { RecentConditionsPanel } from '../components/RecentConditionsPanel';
+import { applyDeadReckoning } from '../services/DeadReckoning';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -524,7 +525,9 @@ export default function MapScreen() {
   // WS takes precedence for any member that has both sources
   const mergedMembers = new Map<string, MemberLocation>(meshMembers);
   for (const [id, m] of members) mergedMembers.set(id, m);
-  const memberList = Array.from(mergedMembers.values());
+  // Apply dead reckoning — extrapolate positions for members moving with a known heading
+  const reckonedMembers = applyDeadReckoning(mergedMembers);
+  const memberList = Array.from(reckonedMembers.values());
 
   // Load avalanche data on mount
   useEffect(() => {

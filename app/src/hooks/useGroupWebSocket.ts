@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  loadMemberLocations,
+  saveMemberLocations,
+} from '../services/MemberLocationCache';
 
 export interface MemberLocation {
   userId: string;
   lat: number;
   lng: number;
   speed: number;     // mph
+  heading?: number;  // degrees CW from N (used for dead reckoning)
   battery: number;   // percent 0–100
   timestamp: string; // ISO string
 }
@@ -80,6 +85,8 @@ interface UseGroupWebSocketResult {
 export function useGroupWebSocket(options?: UseGroupWebSocketOptions): UseGroupWebSocketResult {
   const [members, setMembers] = useState<Map<string, MemberLocation>>(new Map());
   const [connected, setConnected] = useState(false);
+  // Debounce handle for cache writes (avoid thrashing AsyncStorage)
+  const cacheTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [cmoStates, setCmoStates] = useState<Map<string, CMOState>>(new Map());
   const [sweepGap, setSweepGap] = useState<SweepGap | null>(null);
   const [cmoWarning, setCmoWarning] = useState(false);
@@ -164,12 +171,19 @@ export function useGroupWebSocket(options?: UseGroupWebSocketOptions): UseGroupW
                 lat: msg.location?.lat ?? msg.lat,
                 lng: msg.location?.lng ?? msg.lng,
                 speed: msg.speedMph ?? msg.speed ?? 0,
+                heading: msg.heading ?? msg.location?.heading ?? undefined,
                 battery: msg.battery ?? 100,
                 timestamp: msg.timestamp ? new Date(msg.timestamp).toISOString() : new Date().toISOString(),
               };
               setMembers((prev) => {
                 const next = new Map(prev);
                 next.set(loc.userId, loc);
+                // Debounced cache write — 2s after last update
+                if (cacheTimer.current) clearTimeout(cacheTimer.current);
+                cacheTimer.current = setTimeout(
+                  () => void saveMemberLocations(next),
+                  2_000,
+                );
                 return next;
               });
               break;
@@ -287,9 +301,25 @@ export function useGroupWebSocket(options?: UseGroupWebSocketOptions): UseGroupW
     return () => {
       unmounted.current = true;
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      if (cacheTimer.current) clearTimeout(cacheTimer.current);
       wsRef.current?.close();
     };
   }, [connect]);
+
+  // Load cached member locations on mount so the map is pre-populated offline
+  useEffect(() => {
+    loadMemberLocations()
+      .then((cached) => {
+        if (cached.size > 0 && !unmounted.current) {
+          setMembers((prev) => {
+            // Only apply cached entries that aren't already in live state
+            if (prev.size > 0) return prev;
+            return cached;
+          });
+        }
+      })
+      .catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     members,

@@ -15,6 +15,7 @@ import GroupRadarScreen from '../screens/GroupRadarScreen';
 import RideSummaryScreen from '../screens/RideSummaryScreen';
 import RideHistoryScreen from '../screens/RideHistoryScreen';
 import RideReplayScreen from '../screens/RideReplayScreen';
+import CompassNavScreen from '../screens/CompassNavScreen';
 import { GroupProvider } from '../context/GroupContext';
 import { colors } from '../theme/colors';
 import type { Ride } from '../api/rides';
@@ -61,6 +62,7 @@ export type ProfileStackParamList = {
   EmergencyInfo: undefined;
   RideHistory: undefined;
   OfflineMaps: undefined;
+  CompassNav: undefined;
   RideSummaryFromHistory: { ride: Ride };
   RideReplay: { rideId: string; ride?: RecordedRide };
 };
@@ -81,6 +83,7 @@ function ProfileNavigator() {
       <ProfileStack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} />
       <ProfileStack.Screen name="EmergencyInfo" component={EmergencyInfoScreen} options={{ title: 'Emergency Info' }} />
       <ProfileStack.Screen name="OfflineMaps" component={OfflineMapsScreen} options={{ title: 'Offline Maps' }} />
+      <ProfileStack.Screen name="CompassNav" component={CompassNavScreen} options={{ title: 'Compass Navigation' }} />
       <ProfileStack.Screen name="RideHistory" component={RideHistoryScreen} options={{ title: 'Ride History' }} />
       <ProfileStack.Screen
         name="RideSummaryFromHistory"

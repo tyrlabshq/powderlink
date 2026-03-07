@@ -28,6 +28,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 
 import SOSScreen from './SOSScreen';
+import EmergencyScreen from './EmergencyScreen';
+import EmergencyInfoScreen from './EmergencyInfoScreen';
 import { colors } from '../theme/colors';
 import DeadMansSwitchModal from '../components/DeadMansSwitchModal';
 import {
@@ -42,7 +44,9 @@ import { useGroup } from '../context/GroupContext';
 
 export type SafetyStackParamList = {
   DMSSettings: undefined;
+  Emergency: undefined;
   SOSMain: undefined;
+  EmergencyInfo: undefined;
 };
 
 const Stack = createStackNavigator<SafetyStackParamList>();
@@ -198,10 +202,10 @@ function DMSSettingsScreen() {
     }
   };
 
-  // ── Modal: SOS shortcut ──────────────────────────────────────────────────
+  // ── Modal: SOS shortcut — navigates to Emergency hub ────────────────────
   const handleSOS = () => {
     setModalVisible(false);
-    navigation.navigate('SOSMain');
+    navigation.navigate('Emergency');
   };
 
   // ── Modal: 2-min countdown expired → escalate to emergency contacts ───────
@@ -298,13 +302,13 @@ function DMSSettingsScreen() {
         </>
       )}
 
-      {/* SOS shortcut */}
+      {/* Emergency shortcut (opens full emergency hub) */}
       <TouchableOpacity
         style={styles.sosBtn}
-        onPress={() => navigation.navigate('SOSMain')}
+        onPress={() => navigation.navigate('Emergency')}
         activeOpacity={0.85}
       >
-        <Text style={styles.sosBtnText}>🆘  SOS</Text>
+        <Text style={styles.sosBtnText}>🆘  Emergency</Text>
       </TouchableOpacity>
 
       {/* DMS alert modal */}
@@ -335,7 +339,17 @@ export default function SafetyScreen() {
       }}
     >
       <Stack.Screen name="DMSSettings" component={DMSSettingsScreen} />
+      <Stack.Screen
+        name="Emergency"
+        component={EmergencyScreen}
+        options={{ title: 'Emergency', headerShown: true }}
+      />
       <Stack.Screen name="SOSMain" component={SOSScreen} />
+      <Stack.Screen
+        name="EmergencyInfo"
+        component={EmergencyInfoScreen}
+        options={{ title: 'Emergency Info', headerShown: true }}
+      />
     </Stack.Navigator>
   );
 }

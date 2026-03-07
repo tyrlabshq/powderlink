@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { useGroup } from '../context/GroupContext';
 import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
 import type { GroupStackParamList } from '../navigation/AppNavigator';
 
 type Nav = StackNavigationProp<GroupStackParamList, 'GroupHome'>;
@@ -28,7 +29,7 @@ export default function GroupHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>PowderLink</Text>
+      <Text style={styles.title}>TrailGuard</Text>
       <Text style={styles.subtitle}>Ride together. Stay connected.</Text>
 
       <TouchableOpacity style={styles.btnPrimary} onPress={() => navigation.navigate('CreateGroup')}>
@@ -51,8 +52,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 32,
   },
-  title: { color: colors.accent, fontSize: 32, fontWeight: '700', marginBottom: 8 },
-  subtitle: { color: colors.textDim, fontSize: 16, marginBottom: 56, textAlign: 'center' },
+  title: { color: colors.accent, fontSize: typography.xxl, fontWeight: '700', marginBottom: 8 },
+  subtitle: { color: colors.textDim, fontSize: typography.md, marginBottom: 56, textAlign: 'center' },
   btnPrimary: {
     backgroundColor: colors.accent,
     borderRadius: 12,
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  btnPrimaryText: { color: '#000', fontSize: 17, fontWeight: '700' },
+  btnPrimaryText: { color: '#fff', fontSize: typography.lg, fontWeight: '700' },
   btnSecondary: {
     borderColor: colors.accent,
     borderWidth: 1.5,
@@ -72,5 +73,5 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  btnSecondaryText: { color: colors.accent, fontSize: 17, fontWeight: '600' },
+  btnSecondaryText: { color: colors.accent, fontSize: typography.lg, fontWeight: '600' },
 });

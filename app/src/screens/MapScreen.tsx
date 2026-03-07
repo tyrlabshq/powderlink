@@ -26,6 +26,8 @@ import { fetchNearbyConditions, type TrailConditionReport } from '../api/trailCo
 import { TrailConditionModal } from '../components/TrailConditionModal';
 import { RecentConditionsPanel } from '../components/RecentConditionsPanel';
 import { applyDeadReckoning } from '../services/DeadReckoning';
+import { MapLoadingSkeleton } from '../components/SkeletonLoader';
+import { typography } from '../theme/typography';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -518,6 +520,9 @@ export default function MapScreen() {
   // Follow mode — camera tracks a specific member
   const [followUserId, setFollowUserId] = useState<string | null>(null);
 
+  // Map initialized — hide skeleton once user location is received or after timeout
+  const [mapReady, setMapReady] = useState(false);
+
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const autoDownloadDone = useRef(false);
 
@@ -625,7 +630,22 @@ export default function MapScreen() {
   const handleUserLocationUpdate = useCallback((location: MapboxGL.Location) => {
     const { longitude, latitude } = location.coords;
     setUserCoords([longitude, latitude]);
+    setMapReady(true);
   }, []);
+
+  // Fallback: mark map ready after 3s even without GPS fix
+  useEffect(() => {
+    const timer = setTimeout(() => setMapReady(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!mapReady) {
+    return (
+      <View style={styles.container}>
+        <MapLoadingSkeleton />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -797,15 +817,15 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   map: { flex: 1 },
   reconnectBanner: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: 'rgba(255,170,0,0.92)', paddingVertical: 10, alignItems: 'center', zIndex: 20 },
-  reconnectText: { color: '#000', fontWeight: '700', fontSize: 14 },
+  reconnectText: { color: '#000', fontWeight: '700', fontSize: typography.sm },
   hud: { position: 'absolute', top: 60, right: 12, backgroundColor: 'rgba(8,12,20,0.85)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, gap: 4 },
-  hudText: { color: colors.text, fontSize: 13, fontWeight: '600' },
-  hudTextSm: { color: colors.textDim, fontSize: 11 },
+  hudText: { color: colors.text, fontSize: typography.sm, fontWeight: '600' },
+  hudTextSm: { color: colors.textDim, fontSize: typography.xs },
   layerBtn: { position: 'absolute', top: 60, left: 12, backgroundColor: 'rgba(8,12,20,0.85)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
-  layerBtnText: { color: colors.text, fontSize: 13, fontWeight: '600' },
+  layerBtnText: { color: colors.text, fontSize: typography.sm, fontWeight: '600' },
   layerPanel: { position: 'absolute', top: 110, left: 12, backgroundColor: 'rgba(13,21,32,0.96)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minWidth: 170, zIndex: 10 },
   layerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6 },
-  layerLabel: { color: colors.text, fontSize: 13, marginRight: 12 },
+  layerLabel: { color: colors.text, fontSize: typography.sm, marginRight: 12 },
   centerBtn: { position: 'absolute', bottom: 100, right: 16, width: 48, height: 48, borderRadius: 24, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 4 },
   centerBtnText: { fontSize: 22, color: colors.accent },
   groupBtn: { position: 'absolute', bottom: 160, right: 16, backgroundColor: colors.accent, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 24, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 4 },
@@ -813,14 +833,14 @@ const styles = StyleSheet.create({
   groupBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
   detailSheet: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 40, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 20 },
   sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  sheetName: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  sheetClose: { color: colors.textDim, fontSize: 20, padding: 4 },
+  sheetName: { color: '#fff', fontSize: typography.xl, fontWeight: '700' },
+  sheetClose: { color: colors.textDim, fontSize: typography.xl, padding: 4 },
   sheetRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.08)' },
-  sheetLabel: { color: colors.textDim, fontSize: 14 },
-  sheetValue: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  sheetLabel: { color: colors.textDim, fontSize: typography.sm },
+  sheetValue: { color: colors.text, fontSize: typography.sm, fontWeight: '600' },
   followBtn: { marginTop: 16, borderWidth: 1.5, borderColor: colors.accent, borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
   followBtnActive: { backgroundColor: colors.accent + '22' },
-  followBtnText: { color: colors.accent, fontSize: 15, fontWeight: '700' },
+  followBtnText: { color: colors.accent, fontSize: typography.md, fontWeight: '700' },
   followBtnTextActive: { color: colors.accent },
   conditionsBtn: { position: 'absolute', bottom: 220, right: 16, width: 48, height: 48, borderRadius: 24, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 4 },
   conditionsBtnActive: { backgroundColor: colors.accent + '33', borderColor: colors.accent },
@@ -830,13 +850,13 @@ const styles = StyleSheet.create({
   routesBtnText: { fontSize: 20 },
   routePanel: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 36, maxHeight: 320, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.4, shadowRadius: 12, elevation: 20 },
   routePanelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  routePanelTitle: { color: colors.text, fontSize: 17, fontWeight: '700' },
-  routePanelClose: { color: colors.textDim, fontSize: 20, padding: 4 },
-  routeEmpty: { color: colors.textDim, fontSize: 14, textAlign: 'center', marginTop: 8 },
+  routePanelTitle: { color: colors.text, fontSize: typography.lg, fontWeight: '700' },
+  routePanelClose: { color: colors.textDim, fontSize: typography.xl, padding: 4 },
+  routeEmpty: { color: colors.textDim, fontSize: typography.sm, textAlign: 'center', marginTop: 8 },
   routeItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.08)' },
   routeItemSelected: { backgroundColor: 'rgba(0,170,255,0.12)', borderRadius: 8, paddingHorizontal: 8 },
   routeDot: { width: 12, height: 12, borderRadius: 6, marginRight: 12 },
   routeInfo: { flex: 1 },
-  routeName: { color: colors.text, fontSize: 14, fontWeight: '600' },
-  routeMeta: { color: colors.textDim, fontSize: 12, marginTop: 2 },
+  routeName: { color: colors.text, fontSize: typography.sm, fontWeight: '600' },
+  routeMeta: { color: colors.textDim, fontSize: typography.xs, marginTop: 2 },
 });

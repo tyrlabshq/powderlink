@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, StyleSheet,
-  ActivityIndicator, RefreshControl,
+  RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
+import { EmptyState } from '../components/EmptyState';
+import { RideHistorySkeleton } from '../components/SkeletonLoader';
 import { getRideHistory, formatDuration } from '../api/rides';
 import type { Ride } from '../api/rides';
 import type { ProfileStackParamList } from '../navigation/AppNavigator';
@@ -71,8 +74,8 @@ export default function RideHistoryScreen() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={colors.accent} size="large" />
+      <View style={styles.container}>
+        <RideHistorySkeleton />
       </View>
     );
   }
@@ -88,11 +91,13 @@ export default function RideHistoryScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.accent} />
         }
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>🛷</Text>
-            <Text style={styles.emptyText}>No rides yet</Text>
-            <Text style={styles.emptySubtext}>Your last 30 rides will appear here</Text>
-          </View>
+          <EmptyState
+            icon="🏔️"
+            title="No rides yet"
+            subtitle={"Your last 30 rides will appear here.\nHead out and start your first trail ride!"}
+            ctaLabel="Start a Ride"
+            onCta={() => navigation.getParent()?.navigate('Map')}
+          />
         }
         ListHeaderComponent={
           error ? (
@@ -122,23 +127,18 @@ const styles = StyleSheet.create({
     borderColor: colors.textDim,
   },
   rideLeft: { flex: 1 },
-  rideDate: { color: colors.text, fontSize: 15, fontWeight: '600' },
-  rideTime: { color: colors.textDim, fontSize: 13, marginTop: 2 },
+  rideDate: { color: colors.text, fontSize: typography.md, fontWeight: '600' },
+  rideTime: { color: colors.textDim, fontSize: typography.sm, marginTop: 2 },
   statsRow: { flexDirection: 'row', marginTop: 8, gap: 8, flexWrap: 'wrap' },
   statChip: {
     color: colors.accent,
-    fontSize: 12,
-    backgroundColor: '#0a1a2a',
+    fontSize: typography.xs,
+    backgroundColor: colors.surface,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
   },
-  arrow: { color: colors.textDim, fontSize: 24, fontWeight: '300', marginLeft: 8 },
-
-  empty: { alignItems: 'center', paddingTop: 80 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: colors.text, fontSize: 18, fontWeight: '600' },
-  emptySubtext: { color: colors.textDim, fontSize: 14, marginTop: 6 },
+  arrow: { color: colors.textDim, fontSize: typography.xl, fontWeight: '300', marginLeft: 8 },
 
   errorBanner: {
     backgroundColor: colors.danger + '22',
@@ -148,5 +148,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.danger,
   },
-  errorText: { color: colors.danger, fontSize: 13 },
+  errorText: { color: colors.danger, fontSize: typography.sm },
 });

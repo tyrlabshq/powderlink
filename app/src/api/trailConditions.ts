@@ -1,3 +1,4 @@
+import { colors } from '../theme/colors';
 import { getAuthHeader } from './authHeader';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8420';
@@ -62,7 +63,7 @@ export const CONDITION_COLORS: Record<ConditionType, string> = {
   powder: '#00aaff',
   icy: '#ff4466',
   closed: '#ff2200',
-  tracked_out: '#ffaa00',
+  tracked_out: colors.warning,
   wet_snow: '#aa88ff',
 };
 
@@ -88,7 +89,7 @@ export const HAZARD_COLORS: Record<HazardType, string> = {
   downed_tree: '#ff8800',
   washout: '#ff4400',
   bridge_out: '#ff2200',
-  debris: '#ffaa00',
+  debris: colors.warning,
   flooding: '#0088ff',
   rock_slide: '#888888',
 };

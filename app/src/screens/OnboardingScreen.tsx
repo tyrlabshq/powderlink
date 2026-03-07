@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
 
 interface Props {
   onAuthenticated: () => void;
@@ -105,60 +106,68 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   logo: {
-    fontSize: 64,
-    marginBottom: 12,
+    fontSize: 72,
+    marginBottom: 16,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: typography.hero,
+    fontWeight: typography.heavy,
     color: colors.text,
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: typography.md,
+    fontWeight: typography.regular,
     color: colors.textDim,
-    marginBottom: 40,
-    marginTop: 4,
+    marginBottom: 48,
+    marginTop: 6,
+    letterSpacing: 0.5,
   },
   card: {
     width: '100%',
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 24,
     gap: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: typography.md,
+    fontWeight: typography.semibold,
     color: colors.text,
   },
   input: {
     backgroundColor: colors.background,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 16,
+    fontSize: typography.md,
     color: colors.text,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   button: {
-    backgroundColor: colors.accent,
-    borderRadius: 10,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.accent,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
+    fontSize: typography.md,
+    fontWeight: typography.bold,
+    color: colors.text,
+    letterSpacing: 0.3,
   },
   hint: {
     marginTop: 24,
-    fontSize: 13,
-    color: colors.textDim,
+    fontSize: typography.xs,
+    color: colors.textMuted,
+    letterSpacing: 0.3,
   },
 });

@@ -25,7 +25,7 @@ function getRelativeTime(timestamp: string): string {
 
 function getBatteryColor(battery: number): string {
   if (battery > 50) return colors.success;
-  if (battery > 20) return '#ffaa00';
+  if (battery > 20) return colors.warning;
   return colors.danger;
 }
 

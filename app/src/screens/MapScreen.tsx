@@ -47,7 +47,7 @@ function getRelativeTime(timestamp: string): string {
 
 function getBatteryColor(battery: number): string {
   if (battery > 50) return colors.success;
-  if (battery > 20) return '#ffaa00';
+  if (battery > 20) return colors.warning;
   return colors.danger;
 }
 
@@ -59,7 +59,7 @@ const CONDITION_DOT_COLORS: Record<string, string> = {
   powder: '#00aaff',
   icy: '#ff4466',
   closed: '#ff2200',
-  tracked_out: '#ffaa00',
+  tracked_out: colors.warning,
   wet_snow: '#aa88ff',
 };
 
@@ -100,8 +100,8 @@ function TrailLayer() {
 // ---------------------------------------------------------------------------
 const DIFFICULTY_COLORS: Record<string, string> = {
   easy: '#00dd66',
-  moderate: '#ffaa00',
-  hard: '#ff3355',
+  moderate: colors.warning,
+  hard: colors.danger,
   unknown: '#6699cc',
 };
 

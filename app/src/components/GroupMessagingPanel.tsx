@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   presetBtnDisabled: {
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     opacity: 0.5,
   },
   presetBtnText: {
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: colors.textDim + '66',
+    borderColor: colors.border + '66',
     borderRadius: 20,
     color: colors.text,
     fontSize: 14,
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
 
   // Offline note
   offlineNote: {
-    color: '#ffaa00',
+    color: colors.warning,
     fontSize: 11,
     textAlign: 'center',
     paddingBottom: 10,

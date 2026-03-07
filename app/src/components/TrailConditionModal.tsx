@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',

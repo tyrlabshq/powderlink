@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
+
+// Simple emoji tab icon that inherits the active/inactive tint via opacity
+function TabIcon({ emoji, color }: { emoji: string; color: string }) {
+  const isActive = color !== '#52788A'; // matches colors.textMuted
+  return (
+    <Text style={{ fontSize: 20, opacity: isActive ? 1 : 0.5 }}>{emoji}</Text>
+  );
+}
 import { supabase } from '../lib/supabase';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -144,17 +152,40 @@ export default function AppNavigator() {
             headerShown: false,
             tabBarStyle: {
               backgroundColor: colors.surface,
-              borderTopColor: colors.textDim,
-              borderTopWidth: 0.5,
+              borderTopColor: colors.border,
+              borderTopWidth: 1,
+              paddingTop: 4,
+              height: 60,
             },
             tabBarActiveTintColor: colors.accent,
-            tabBarInactiveTintColor: colors.textDim,
+            tabBarInactiveTintColor: colors.textMuted,
+            tabBarLabelStyle: {
+              fontSize: 11,
+              fontWeight: '600',
+              marginBottom: 4,
+            },
           }}
         >
-          <Tab.Screen name="Map" component={MapScreen} />
-          <Tab.Screen name="Group" component={GroupNavigator} />
-          <Tab.Screen name="Safety" component={SafetyScreen} />
-          <Tab.Screen name="Profile" component={ProfileNavigator} />
+          <Tab.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ tabBarLabel: 'Map', tabBarIcon: ({ color }) => <TabIcon emoji="🗺" color={color} /> }}
+          />
+          <Tab.Screen
+            name="Group"
+            component={GroupNavigator}
+            options={{ tabBarLabel: 'Group', tabBarIcon: ({ color }) => <TabIcon emoji="🏕" color={color} /> }}
+          />
+          <Tab.Screen
+            name="Safety"
+            component={SafetyScreen}
+            options={{ tabBarLabel: 'Safety', tabBarIcon: ({ color }) => <TabIcon emoji="🛡" color={color} /> }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileNavigator}
+            options={{ tabBarLabel: 'Profile', tabBarIcon: ({ color }) => <TabIcon emoji="⚙️" color={color} /> }}
+          />
         </Tab.Navigator>
       </NavigationContainer>
     </GroupProvider>

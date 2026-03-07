@@ -9,6 +9,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
+import { colors } from '../theme/colors';
 import {
   Animated,
   StyleSheet,
@@ -78,7 +79,7 @@ export function OfflineBanner(): React.ReactElement | null {
   );
 }
 
-const ORANGE = '#E85D04'; // matches colors.accent
+const ORANGE = colors.accent; // trail accent
 
 const styles = StyleSheet.create({
   wrapper: {

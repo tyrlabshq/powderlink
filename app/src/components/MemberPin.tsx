@@ -1,4 +1,5 @@
 import React from 'react';
+import { colors } from '../theme/colors';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { MemberLocation, CMOState } from '../hooks/useGroupWebSocket';
 
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   circleCMO: {
-    borderColor: '#ffaa00',
+    borderColor: colors.warning,
     borderWidth: 2.5,
     opacity: 0.85,
   },

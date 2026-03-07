@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     height: COMPASS_SIZE,
     borderRadius: COMPASS_SIZE / 2,
     borderWidth: 2,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     backgroundColor: 'rgba(13,21,32,0.95)',
   },
   roseDisc: {

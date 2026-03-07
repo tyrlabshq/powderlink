@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   controlBtnActive: { borderColor: colors.accent },
   controlBtnText: { color: colors.text, fontSize: 18, fontWeight: '600' },
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   backBtnText: { color: colors.text, fontSize: 15 },
 });

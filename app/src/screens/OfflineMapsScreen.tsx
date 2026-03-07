@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   presetRowDone: { borderColor: 'rgba(0,255,136,0.3)' },
   presetLabel: { color: colors.text, fontSize: 15, fontWeight: '600' },

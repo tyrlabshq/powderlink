@@ -123,7 +123,7 @@ export default function DeadMansSwitchModal({
   // ── Countdown colour: green → amber → red as time runs out ───────────────
   const urgencyColor = (): string => {
     if (countdown > 90) return colors.success;
-    if (countdown > 30) return '#ffaa00';
+    if (countdown > 30) return colors.warning;
     return colors.danger;
   };
 
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   btnDisable: {
     backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 14,
     paddingVertical: 16,
     width: '100%',

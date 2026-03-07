@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     letterSpacing: 6,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     textAlign: 'center',
   },
   btn: {

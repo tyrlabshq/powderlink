@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   btn: {
     backgroundColor: colors.accent,

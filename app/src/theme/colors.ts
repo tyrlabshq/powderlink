@@ -1,26 +1,26 @@
-// TrailGuard outdoor color palette
+// TrailGuard outdoor color palette — production theme
 export const colors = {
   // ── Backgrounds ─────────────────────────────────────────────────────────
-  background: '#080c14',
-  surface: '#0d1520',
+  background: '#0D1B2A',   // dark navy — night riding / OLED-friendly
+  surface: '#1B2838',      // elevated surface — cards, panels
 
   // ── Brand / Outdoor palette ──────────────────────────────────────────────
-  primary: '#1B4332',       // deep forest green — headers, hero elements
-  primaryLight: '#40916C',  // lighter forest green — success states, highlights
-  accent: '#E85D04',        // trail orange — primary CTAs, links, active states
-  accentAlt: '#00aaff',     // sky blue — kept as secondary accent (map elements)
+  primary: '#2D6A4F',       // deep forest green — headers, hero elements
+  primaryLight: '#52B788',  // sage — highlights, success states
+  accent: '#52B788',        // sage green — primary CTAs, active states
+  accentAlt: '#A8DADC',    // mountain sky — secondary accent, map elements
 
   // ── Status ──────────────────────────────────────────────────────────────
-  success: '#40916C',       // forest green
-  danger: '#ff3355',
-  warning: '#ffaa00',
+  success: '#52B788',       // sage green
+  danger: '#E76F51',        // rust — errors, SOS, danger
+  warning: '#E9C46A',       // amber — caution, warnings
 
   // ── Text ────────────────────────────────────────────────────────────────
-  text: '#F8F9FA',          // off-white — primary text
-  textDim: '#8A9BB0',       // muted — secondary/caption text
-  textMuted: '#495057',     // slate gray — placeholder, disabled
+  text: '#FFFFFF',          // pure white — primary text
+  textDim: '#A8DADC',       // mountain sky — secondary/caption text
+  textMuted: '#52788A',     // slate — placeholder, disabled
 
   // ── Borders / Dividers ──────────────────────────────────────────────────
-  border: 'rgba(255,255,255,0.1)',
-  divider: 'rgba(255,255,255,0.06)',
+  border: 'rgba(168,218,220,0.15)',
+  divider: 'rgba(168,218,220,0.08)',
 };

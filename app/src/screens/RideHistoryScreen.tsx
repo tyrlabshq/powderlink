@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   rideLeft: { flex: 1 },
   rideDate: { color: colors.text, fontSize: typography.md, fontWeight: '600' },

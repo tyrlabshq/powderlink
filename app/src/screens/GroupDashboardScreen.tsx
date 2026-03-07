@@ -659,26 +659,26 @@ const styles = StyleSheet.create({
 
   // Count Me Out button (inactive)
   cmoBtn: {
-    borderColor: '#ffaa00',
+    borderColor: colors.warning,
     borderWidth: 1.5,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  cmoBtnText: { color: '#ffaa00', fontSize: 16, fontWeight: '700' },
+  cmoBtnText: { color: colors.warning, fontSize: 16, fontWeight: '700' },
 
   // Count Me Out button (active — shows current timer)
   cmoActiveBtn: {
     backgroundColor: 'rgba(255,170,0,0.15)',
-    borderColor: '#ffaa00',
+    borderColor: colors.warning,
     borderWidth: 1.5,
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: 'center',
   },
-  cmoActiveBtnTitle: { color: '#ffaa00', fontSize: 16, fontWeight: '700', textAlign: 'center' },
-  cmoActiveBtnSub: { color: '#ffaa00', fontSize: 13, textAlign: 'center', marginTop: 2 },
+  cmoActiveBtnTitle: { color: colors.warning, fontSize: 16, fontWeight: '700', textAlign: 'center' },
+  cmoActiveBtnSub: { color: colors.warning, fontSize: 13, textAlign: 'center', marginTop: 2 },
   cmoActiveBtnHint: { color: colors.textDim, fontSize: 11, textAlign: 'center', marginTop: 4 },
 });
 
@@ -720,7 +720,7 @@ const modalStyles = StyleSheet.create({
   },
   durationBtn: {
     borderWidth: 1.5,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 18,
@@ -728,7 +728,7 @@ const modalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   durationBtnActive: {
-    borderColor: '#ffaa00',
+    borderColor: colors.warning,
     backgroundColor: 'rgba(255,170,0,0.15)',
   },
   durationBtnText: {
@@ -737,12 +737,12 @@ const modalStyles = StyleSheet.create({
     fontWeight: '600',
   },
   durationBtnTextActive: {
-    color: '#ffaa00',
+    color: colors.warning,
   },
   noteInput: {
     backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 10,
     color: colors.text,
     fontSize: 15,
@@ -756,7 +756,7 @@ const modalStyles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
@@ -768,7 +768,7 @@ const modalStyles = StyleSheet.create({
   },
   confirmBtn: {
     flex: 2,
-    backgroundColor: '#ffaa00',
+    backgroundColor: colors.warning,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
@@ -805,7 +805,7 @@ const rowStyles = StyleSheet.create({
   badgeSweepText: { color: '#aa88ff' },
   sweepBtn: {
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,

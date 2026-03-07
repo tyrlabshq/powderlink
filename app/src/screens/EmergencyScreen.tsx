@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   contactInfo: {
     flex: 1,
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: colors.textDim,
+    borderColor: colors.border,
   },
   medRow: {
     flexDirection: 'row',

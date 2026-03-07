@@ -12,6 +12,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { colors } from '../theme/colors';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { SatelliteService, SatelliteStatus, SatelliteStatusEvent } from '../services/SatelliteService';
 
@@ -63,10 +64,10 @@ export const SatelliteStatusIndicator: React.FC<Props> = ({ dotOnly = false, sty
 function getDotColor(status: SatelliteStatus): string {
   switch (status) {
     case 'available':   return '#00cc66';  // green
-    case 'searching':   return '#ffaa00';  // yellow
+    case 'searching':   return colors.warning;  // yellow
     case 'unavailable': return '#cc3333';  // red
     case 'unsupported': return '#555555';  // grey
-    default:            return '#ffaa00';
+    default:            return colors.warning;
   }
 }
 

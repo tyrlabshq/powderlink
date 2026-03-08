@@ -1,11 +1,20 @@
 /**
- * OfflineBanner — TG-03
+ * OfflineBanner — TG-03 / TG-02
  *
- * An orange pill/banner that appears at the top of the screen (below the
- * device safe area) whenever the app has no network connectivity.
+ * An animated pill/banner that appears at the top of the screen (below the
+ * device safe area) to indicate degraded connectivity.
  *
- * Shows: "Offline — X pings queued"
- * Auto-dismisses as soon as connectivity returns (no manual dismiss needed).
+ * Three states:
+ *   🟠 Offline    — no cell, no WiFi, no satellite
+ *                   "Offline — X pings queued"
+ *   🔵 Satellite  — no cell/WiFi, but iPhone 14+ satellite radio active
+ *                   "Satellite Mode — X queued"
+ *   (hidden)      — online; banner is not rendered
+ *
+ * Auto-dismisses as soon as full connectivity returns (no manual dismiss).
+ *
+ * TG-02 enhancement: satellite fallback tier is shown distinctly from full
+ * offline, so users know the device has a last-resort comms path.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -17,21 +26,24 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useOfflineQueue } from '../hooks/useOfflineQueue';
+import { useConnectivity } from '../hooks/useConnectivity';
+
+// ─── Banner heights & animation budget ───────────────────────────────────────
+const BANNER_SLIDE_OFFSET = -80;
 
 export function OfflineBanner(): React.ReactElement | null {
-  const { isOffline, queueCount } = useOfflineQueue();
+  const { tier, queueCount } = useConnectivity();
   const insets = useSafeAreaInsets();
 
-  // Slide in/out animation
-  const slideAnim = useRef(new Animated.Value(-80)).current;
+  const isVisible = tier !== 'online';
+  const slideAnim = useRef(new Animated.Value(BANNER_SLIDE_OFFSET)).current;
   const mountedRef = useRef(false);
 
   useEffect(() => {
     if (!mountedRef.current) {
-      // Skip animation on initial render if online — just stay hidden
       mountedRef.current = true;
-      if (isOffline) {
+      // Skip slide-in animation on first render when already online
+      if (isVisible) {
         Animated.spring(slideAnim, {
           toValue: 0,
           useNativeDriver: true,
@@ -42,7 +54,7 @@ export function OfflineBanner(): React.ReactElement | null {
       return;
     }
 
-    if (isOffline) {
+    if (isVisible) {
       Animated.spring(slideAnim, {
         toValue: 0,
         useNativeDriver: true,
@@ -51,17 +63,29 @@ export function OfflineBanner(): React.ReactElement | null {
       }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: -80,
+        toValue: BANNER_SLIDE_OFFSET,
         duration: 300,
         useNativeDriver: true,
       }).start();
     }
-  }, [isOffline, slideAnim]);
+  }, [isVisible, slideAnim]);
 
-  const label =
-    queueCount > 0
+  if (!isVisible && !mountedRef.current) return null;
+
+  // ── Label & style based on connectivity tier ─────────────────────────────
+  const isSatellite = tier === 'satellite';
+
+  const pillColor = isSatellite ? colors.primary : colors.accentAlt;
+
+  const label = isSatellite
+    ? queueCount > 0
+      ? `Satellite Mode — ${queueCount} ping${queueCount === 1 ? '' : 's'} queued`
+      : 'Satellite Mode — limited data'
+    : queueCount > 0
       ? `Offline — ${queueCount} ping${queueCount === 1 ? '' : 's'} queued`
       : 'Offline — no signal';
+
+  const dotIcon = isSatellite ? '🛰' : undefined;
 
   return (
     <Animated.View
@@ -71,15 +95,17 @@ export function OfflineBanner(): React.ReactElement | null {
         { top: insets.top, transform: [{ translateY: slideAnim }] },
       ]}
     >
-      <View style={styles.pill}>
-        <View style={styles.dot} />
+      <View style={[styles.pill, { backgroundColor: pillColor }]}>
+        {dotIcon ? (
+          <Text style={styles.satelliteIcon}>{dotIcon}</Text>
+        ) : (
+          <View style={styles.dot} />
+        )}
         <Text style={styles.label}>{label}</Text>
       </View>
     </Animated.View>
   );
 }
-
-const ORANGE = colors.accent; // trail accent
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -90,15 +116,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 8,
     pointerEvents: 'none',
-  },
+  } as any,
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: ORANGE,
     borderRadius: 20,
     paddingVertical: 6,
     paddingHorizontal: 14,
-    // Subtle shadow so it floats above map/content
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.35,
@@ -110,6 +134,10 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: 'rgba(255,255,255,0.85)',
+    marginRight: 7,
+  },
+  satelliteIcon: {
+    fontSize: 13,
     marginRight: 7,
   },
   label: {

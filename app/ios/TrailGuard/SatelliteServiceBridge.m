@@ -53,6 +53,18 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(preferredSOSRoute) {
     return [SatelliteService.shared preferredSOSRoute];
 }
 
+RCT_EXPORT_METHOD(transmitLocationViaSatellite:(double)lat
+                  lng:(double)lng
+                  timestamp:(NSString *)timestamp
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSDictionary *result = [SatelliteService.shared
+        transmitLocationViaSatellite:lat
+        lng:lng
+        timestamp:timestamp];
+    resolve(result);
+}
+
 RCT_EXPORT_METHOD(triggerEmergencySOS) {
     // iOS Emergency SOS via Satellite: on iPhone 14+ with no cellular signal,
     // the system SOS satellite flow is triggered. "ssos://" is the URL scheme
